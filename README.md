@@ -1,2 +1,6 @@
-# pandas_polars_course
-Data set and content of pandas_polars_course
+# `pandas` `polars` course
+
+
+- Data set
+- sample codes and
+- content of `pandas` `polars` course
