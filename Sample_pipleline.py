@@ -62,6 +62,32 @@ def data_cleaning(input_csv):
 temp_df = data_cleaning('marketplace_cashback_20perc_20220517.csv')
 
 
+Reading CSV and Parsing Dates: Use pl.read_csv with dtypes to parse 'date' and 'transaction_date' as datetime columns.
+
+- Renaming Columns:
+
+    Convert all column names to lowercase using pipe and a dictionary comprehension.
+
+    Rename specific columns using rename.
+
+Dropping Columns: Remove 'payment_id' using drop.
+
+Creating New Columns:
+
+    Format 'date_key' to a string with dt.strftime.
+
+    Extract parts of 'msisdn_nsk' using string slicing.
+
+    Extract the hour from 'transaction_date' with dt.hour.
+
+Filtering Rows: Keep rows where 'delearname' is in the specified list using filter.
+
+Assigning Rank:
+
+    Use int_range with over to generate row numbers within each 'date_key' group, sorted by the specified columns and orders.
+
+Sorting: Sort the final DataFrame by 'date_key' and 'rank'.
+
 ###################################################################
     
 import datetime
