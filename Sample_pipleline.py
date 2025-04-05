@@ -28,6 +28,40 @@ def data_cleaning(input_csv):
     
 temp_df = data_cleaning('marketplace_cashback_20perc_20220517.csv')
 
+
+
+def data_cleaning(input_csv):
+    df = (
+        pl.read_csv(input_csv, dtypes={'date': pl.Datetime, 'transaction_date': pl.Datetime})
+        .pipe(lambda df: df.rename({col: col.lower() for col in df.columns}))
+        .rename({'date': 'date_key', 'customer_msisdn': 'msisdn_nsk'})
+        .drop('payment_id')
+        .with_columns(
+            pl.col('date_key').dt.strftime('%Y%m%d').alias('date_key'),
+            pl.col('msisdn_nsk').cast(pl.Utf8).str.slice(2).alias('msisdn_nsk_clean'),
+            pl.col('msisdn_nsk').cast(pl.Utf8).str.slice(-1).alias('msisdn_lastdigit'),
+            pl.col('transaction_date').dt.hour().alias('temp_hour')
+        )
+        .filter(pl.col('delearname').is_in(["SNAPCAB", "SNAPFOOD", "SNAPMARKET"]))
+        .with_columns(
+            pl.int_range(1, pl.len() + 1)
+            .over(
+                'date_key',
+                order_by=[
+                    pl.col('granted_gift_irr').desc(),
+                    'msisdn_lastdigit',
+                    'temp_hour'
+                ]
+            )
+            .alias('rank')
+        )
+        .sort(['date_key', 'rank'])
+    )
+    return df
+
+temp_df = data_cleaning('marketplace_cashback_20perc_20220517.csv')
+
+
 ###################################################################
     
 import datetime
