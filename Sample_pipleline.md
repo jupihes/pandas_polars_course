@@ -1,3 +1,5 @@
+
+```python
 import pandas as pd
 from os import chdir
 
@@ -27,9 +29,11 @@ def data_cleaning(input_csv):
     return df
     
 temp_df = data_cleaning('marketplace_cashback_20perc_20220517.csv')
+```
 
+### polars
 
-
+```python
 def data_cleaning(input_csv):
     df = (
         pl.read_csv(input_csv, dtypes={'date': pl.Datetime, 'transaction_date': pl.Datetime})
@@ -60,7 +64,7 @@ def data_cleaning(input_csv):
     return df
 
 temp_df = data_cleaning('marketplace_cashback_20perc_20220517.csv')
-
+```
 
 Reading CSV and Parsing Dates: Use pl.read_csv with dtypes to parse 'date' and 'transaction_date' as datetime columns.
 
@@ -88,8 +92,9 @@ Assigning Rank:
 
 Sorting: Sort the final DataFrame by 'date_key' and 'rank'.
 
-###################################################################
-    
+
+### datetime
+```sql    
 import datetime
 import jdatetime 
 
@@ -113,10 +118,11 @@ def extract_city_name(df):
     df = df.copy()
     df[['origin_city_name', 'dest_city_name']] = city
     return df
+```
 
+### datetime on pandas
 
-### 
-
+```python 
 def time_to_datetime(df, columns):
     '''
     Combine all time items into datetimes.
@@ -133,4 +139,46 @@ def time_to_datetime(df, columns):
                                errors='coerce')
     df[columns] = df[columns].apply(converter)
     return df
+```
 
+
+
+
+### to review
+
+[seven-clean-steps-to-reshape-your-data-with-pandas-or-how-i-use-python-where-excel-fails](https://medium.com/data-science/seven-clean-steps-to-reshape-your-data-with-pandas-or-how-i-use-python-where-excel-fails-62061f86ef9c)
+
+
+```python
+# Now define a function for doing the reshape
+def ReshapeFunc(excel_obj, i):
+    """ Takes in an excel file object with multiple tabs in a wide format, and a specified index of the tab to be parsed and reshaped. Returns a data frame of the specified tab reshaped to long format"""
+
+    tabnames = data.sheet_names
+    assert i < len(tabnames), "Your tab index exceeds the number of available tabs, try a lower number" 
+    
+    # parse and clean columns
+    df = excel_obj.parse(sheetname=tabnames[i], skiprows=7)
+    cols1 = [str(x)[:4] for x in list(df.columns)]
+    cols2 = [str(x) for x in list(df.iloc[0,:])]
+    cols = [x+"_"+y for x,y in zip(cols1,cols2)]
+    df.columns = cols
+    df = df.drop(["Unna_nan"], axis=1).iloc[1:,:].rename(columns={'dist_nan':'district',                                   'prov_nan': 'province',                                                       'part_nan':'partner',                                                       'fund_nan':'financing_source'})    # new columns, drop some and change data type
+    df['main_organization'] = tabnames[i].split("_")[0] + " "+ tabnames[i].split("_")[1]
+    df.drop([c for c in df.columns if "Total" in c], axis=1, inplace= True) 
+    
+    for c in [c for c in df.columns if "yrs" in c]:
+        df[c] = df[c].apply(lambda x: pd.to_numeric(x))    # reshape - indexing, pivoting and stacking
+    idx = ['district','province', 'partner','financing_source'
+,'main_organization']    multi_indexed_df = df.set_index(idx)
+    stacked_df = multi_indexed_df.stack(dropna=False)
+    long_df = stacked_df.reset_index()
+    
+    # clean up and finalize
+    col_str = long_df.level_5.str.split("_") 
+    long_df['target_year'] = [x[0] for x in col_str] 
+    long_df['target_age'] = [x[1] for x in col_str]
+    long_df['target_quantity'] = long_df[0] # rename this column
+    df_final = long_df.drop(['level_5', 0], axis=1)    return df_final
+
+```
