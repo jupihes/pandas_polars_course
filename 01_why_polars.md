@@ -11,6 +11,7 @@ import marimo as mo
 # An introduction to Polars
 
 _By [Koushik Khan](https://github.com/koushikkhan)._
+_Few editions By [Hesam M.Hosseini](https://github.com/jupihes)._
 
 This notebook provides a birds-eye overview of [Polars](https://pola.rs/), a fast and user-friendly data manipulation library for Python, and compares it to alternatives like Pandas and PySpark.
 
