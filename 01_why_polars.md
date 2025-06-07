@@ -16,11 +16,23 @@ _Few editions By [Hesam M.Hosseini](https://github.com/jupihes)._
 
 [From](https://marimo-team.github.io/learn/)
 
+
+## few high-level
+
+
+![slide 1 - overall view](https://github.com/jupihes/pandas_polars_course/blob/main/images/polars_pydata2024_1.jpg)
+![slide 2 - data flow in polars ](https://github.com/jupihes/pandas_polars_course/blob/main/images/polars_pydata2024_2.jpg)
+![slide 3 - query_engine with Dataframe backend](https://github.com/jupihes/pandas_polars_course/blob/main/images/polars_pydata2024_3.jpg)
+
+![performance comparision](https://github.com/jupihes/pandas_polars_course/blob/main/images/polars_spark_trino.jpg)
+
+##
+
 This notebook provides a birds-eye overview of [Polars](https://pola.rs/), a fast and user-friendly data manipulation library for Python, and compares it to alternatives like Pandas and PySpark.
 
 Like Pandas and PySpark, the central data structure in Polars is **the DataFrame**, a tabular data structure consisting of named columns. For example, the next cell constructs a DataFrame that records the gender, age, and height in centimeters for a number of individuals.
 
-```{.python.marimo}
+```{python}
 import polars as pl
 
 df_pl = pl.DataFrame(
